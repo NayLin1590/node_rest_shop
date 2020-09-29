@@ -4,20 +4,22 @@ let morgan = require("morgan");
 let bodyParser = require("body-parser");
 let mongoose = require("mongoose");
 
-
 let app = express();
 
 let productRoutes = require('./api/routes/products');
 let orderRoutes = require('./api/routes/orders');
+let userRoutes = require('./api/routes/users')
 
 let dburl = 'mongodb://nicholas:nicholas15@cluster0-shard-00-00.nzmmg.mongodb.net:27017,cluster0-shard-00-01.nzmmg.mongodb.net:27017,cluster0-shard-00-02.nzmmg.mongodb.net:27017/node-rest-shop?ssl=true&replicaSet=atlas-pd2691-shard-0&authSource=admin&retryWrites=true&w=majority';
 mongoose.connect(dburl,{useNewUrlParser:true , useUnifiedTopology:true})
     .then(res=>console.log("connect to mongoAtlas"))
     .catch(err=>console.log(err));
+mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
 
 app.use( ( req, res, next )=>{
     res.header("Access-Control-Allow-Origin","*");
@@ -35,6 +37,7 @@ app.use( ( req, res, next )=>{
 
 app.use('/products',productRoutes);
 app.use('/orders',orderRoutes);
+app.use('/users',userRoutes);
 
 app.use( (req, res, next)=>{
     let error = new Error("File not Found");

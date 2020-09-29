@@ -1,37 +1,14 @@
 let express = require("express");
-
 let router = express.Router();
+let checkAuth = require("../middleware/check-auth");
+let orderController = require("../controller/orders")
 
-router.get('/', ( req, res, next)=>{
- res.status(200).json({
-     message :'Orders is comming with get request'
- });
-});
+router.post('/', checkAuth, orderController.create_order );
 
-router.post('/', ( req, res, next)=>{
-    let order = {
-        productId:req.body.productId,
-        quantity :req.body.quantity
-    }
-    res.status(201).json({
-        message :'Orders is comming with post request',
-        order:order
-    });
-});
+router.get('/', checkAuth ,orderController.get_all_orders);
 
-router.get('/:orderId', ( req, res, next)=>{
-    res.status(200).json({
-        message :'Orders is comming',
-        orderID : req.params.orderId
-    });
-});
+router.get('/:orderId', checkAuth, orderController.get_single_order );
    
-router.delete('/:orderId', ( req, res, next)=>{
-    res.status(200).json({
-        message :'Orders is deleted',
-        orderID : req.params.orderId
-    });
-});
-   
-   
+router.delete('/:orderId',checkAuth, orderController.delete_order);
+     
 module.exports = router;
